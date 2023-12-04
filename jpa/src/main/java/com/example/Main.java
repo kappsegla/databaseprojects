@@ -1,3 +1,5 @@
+package com.example;
+
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -12,6 +14,14 @@ public class Main {
         System.out.print("Enter search term: ");
         Scanner scanner = new Scanner(System.in);
         String name = scanner.nextLine();
+
+        inTransaction((entityManager) -> {
+            entityManager.persist(new Country("Sweden", CountryCode.of("SE")));
+            entityManager.persist(new Country("Denmark", CountryCode.of("DK")));
+            entityManager.persist(new Country("Norway", CountryCode.of("NOR")));
+        });
+//        em.flush();
+//        em.clear();
 
         // Validate user input
         if (name == null || name.isEmpty()) {

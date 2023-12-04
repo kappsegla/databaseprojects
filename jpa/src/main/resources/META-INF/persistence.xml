@@ -5,11 +5,11 @@
     <persistence-unit name="jpa-hibernate-mysql">
         <properties>
             <!-- Database connection settings -->
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/test"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/jpa"/>
             <property name="jakarta.persistence.jdbc.user" value="root"/>
             <property name="jakarta.persistence.jdbc.password" value="root"/>
             <!-- Automatically export the schema -->
-            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
             <!-- Echo all executed SQL to console -->
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>

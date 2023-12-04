@@ -1,9 +1,10 @@
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+package com.example;
+
+import com.example.converters.CountryCodeAttributeConverter;
+import jakarta.persistence.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -12,21 +13,26 @@ public class Country {
 
     @Id
     @Column(name = "country_id")
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "country_name")
     private String countryName;
 
     @Column(name = "language_code")
-    private String languageCode;
+    @Convert(converter = CountryCodeAttributeConverter.class)
+    private CountryCode countryCode;
 
-    public int getId() {
-        return id;
+    public Country() {
     }
 
-    public Country setId(int id) {
-        this.id = id;
-        return this;
+    public Country(String countryName, CountryCode countryCode) {
+        this.countryName = countryName;
+        this.countryCode = countryCode;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getCountryName() {
@@ -38,12 +44,12 @@ public class Country {
         return this;
     }
 
-    public String getLanguageCode() {
-        return languageCode;
+    public CountryCode getLanguageCode() {
+        return countryCode;
     }
 
-    public Country setLanguageCode(String languageCode) {
-        this.languageCode = languageCode;
+    public Country setLanguageCode(CountryCode countryCode) {
+        this.countryCode = countryCode;
         return this;
     }
 
@@ -68,6 +74,6 @@ public class Country {
         return getClass().getSimpleName() + "(" +
                "id = " + id + ", " +
                "countryName = " + countryName + ", " +
-               "languageCode = " + languageCode + ")";
+               "languageCode = " + countryCode + ")";
     }
 }
