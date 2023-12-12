@@ -12,7 +12,6 @@ public class Main {
     public static void main(String[] args) {
         EntityManager em = JPAUtil.getEntityManager();
         Scanner scanner = new Scanner(System.in);
-        String name = scanner.nextLine();
 
         //CRUD
         //CREATE
@@ -20,6 +19,10 @@ public class Main {
             Country country = new Country();
             country.setCountryName("Sweden");
             country.setLanguageCode("sv");
+            entityManager.persist(country);
+            country = new Country();
+            country.setCountryName("Denmark");
+            country.setLanguageCode("dk");
             entityManager.persist(country);
         });
         //READ ONE
@@ -31,8 +34,9 @@ public class Main {
         //UPDATE ONE
         inTransaction(entityManager -> {
             Country c = entityManager.find(Country.class, 1);
+
             if (c != null)
-                c.setCountryName("Changed");
+                c.setCountryName("Sweden");
         });
         //DELETE ONE
         inTransaction(entityManager -> {
@@ -45,27 +49,23 @@ public class Main {
             String queryString = """
                     select c from Country c
                     """;
-           var query = entityManager.createQuery(queryString, Country.class);
-           List<Country> countries = query.getResultList();
-           countries.forEach(System.out::println);
+            var query = entityManager.createQuery(queryString, Country.class);
+            List<Country> countries = query.getResultList();
+            countries.forEach(System.out::println);
         });
+        //READ with filter
+        System.out.print("Enter country name: ");
+        String name = scanner.nextLine();
 
-
-
-//        System.out.print("Enter search term: ");
-//        Scanner scanner = new Scanner(System.in);
-//        String name = scanner.nextLine();
-//
-//        // Validate user input
-//        if (name == null || name.isEmpty()) {
-//            System.out.println("Invalid input.");
-//            return;
-//        }
-//
-//        TypedQuery<Country> query = em.createQuery("SELECT c FROM Country c WHERE c.countryName = :name", Country.class);
-//        query.setParameter("name", name);
-//        List<Country> countries = query.getResultList();
-//        countries.forEach(System.out::println);
+        inTransaction(entityManager -> {
+            String queryString = """
+                    select c from Country c where c.countryName= :name
+                    """;
+            var query = entityManager.createQuery(queryString, Country.class);
+            query.setParameter("name", name);
+            List<Country> countries = query.getResultList();
+            countries.forEach(System.out::println);
+        });
 
         em.close();
     }

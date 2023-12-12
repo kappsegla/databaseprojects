@@ -28,6 +28,9 @@ public class Country {
     @Column(name = "language_code")
     private String languageCode;
 
+//    @Version
+//    private int version;
+
     public Integer getId() {
         return id;
     }
@@ -68,4 +71,14 @@ public class Country {
         this.languageCode = languageCode;
     }
 
+    @Override
+    public String toString() {
+        return "Country{" +
+               "id=" + id +
+               ", createdAt=" + createdAt +
+               ", updatedAt=" + updatedAt +
+               ", countryName='" + countryName + '\'' +
+               ", languageCode='" + languageCode + '\'' +
+               '}';
+    }
 }
