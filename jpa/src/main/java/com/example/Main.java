@@ -1,8 +1,11 @@
 package com.example;
 
+import com.example.entities.Employee;
 import jakarta.persistence.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
@@ -12,16 +15,15 @@ public class Main {
         EntityManager em = JPAUtil.getEntityManager();
         Scanner scanner = new Scanner(System.in);
 
-        inTransaction(entityManager -> {
-            Organization organization = entityManager.find(Organization.class,1);
-            //Check for null
-            Member member = new Member();
-            member.setName("Martin");
-            entityManager.persist(member);
-            organization.addMember(member);
-            organization = entityManager.find(Organization.class,2);
-            organization.addMember(member);
-        });
+        var entityGraph = em.getEntityGraph("loadall");
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("jakarta.persistence.fetchgraph", entityGraph);
+        Employee employee = em.find(Employee.class, 1, properties);
+
+        System.out.println(employee.getFirstName());
+
+        employee.getRestaurants().forEach(restaurant -> System.out.println(restaurant.getName() + " " + restaurant.getCity().getCityName()));
+
 
         em.close();
     }
