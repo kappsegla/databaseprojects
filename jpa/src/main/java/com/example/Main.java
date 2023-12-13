@@ -11,14 +11,18 @@ public class Main {
     public static void main(String[] args) {
         EntityManager em = JPAUtil.getEntityManager();
         Scanner scanner = new Scanner(System.in);
-        em.getTransaction();
 
+        inTransaction(entityManager -> {
+            Organization organization = entityManager.find(Organization.class,1);
+            //Check for null
+            Member member = new Member();
+            member.setName("Martin");
+            entityManager.persist(member);
+            organization.addMember(member);
+            organization = entityManager.find(Organization.class,2);
+            organization.addMember(member);
+        });
 
-
-
-
-
-        em.getTransaction().commit();
         em.close();
     }
 
