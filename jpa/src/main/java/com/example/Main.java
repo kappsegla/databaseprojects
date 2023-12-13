@@ -1,11 +1,10 @@
 package com.example;
 
+import com.example.dtos.EmployeeDto;
 import com.example.entities.Employee;
-import jakarta.persistence.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
@@ -15,15 +14,12 @@ public class Main {
         EntityManager em = JPAUtil.getEntityManager();
         Scanner scanner = new Scanner(System.in);
 
-        var entityGraph = em.getEntityGraph("loadall");
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("jakarta.persistence.fetchgraph", entityGraph);
-        Employee employee = em.find(Employee.class, 1, properties);
+        var query = em.createQuery("""
+                select new EmployeeDto(e.firstName, e.lastName) from Employee e
+                """, EmployeeDto.class);
+         var employees = query.getResultList();
 
-        System.out.println(employee.getFirstName());
-
-        employee.getRestaurants().forEach(restaurant -> System.out.println(restaurant.getName() + " " + restaurant.getCity().getCityName()));
-
+         employees.forEach(System.out::println);
 
         em.close();
     }
