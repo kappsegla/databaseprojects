@@ -5,17 +5,17 @@
         <driver>com.mysql.jdbc.Driver</driver>
         <url>jdbc:mysql://localhost:3306/test</url>
         <user>root</user>
-        <password>password</password>
+        <password>root</password>
     </jdbc>
 
     <generator>
         <name>org.jooq.codegen.JavaGenerator</name>
 
-<!--        <database>-->
-<!--            <inputSchema>test</inputSchema>-->
-<!--            <includes>.*</includes>-->
-<!--            <excludes></excludes>-->
-<!--        </database>-->
+        <database>
+            <inputSchema>test</inputSchema>
+            <includes>.*</includes>
+            <excludes></excludes>
+        </database>
 
         <target>
             <packageName>org.example.jooq</packageName>

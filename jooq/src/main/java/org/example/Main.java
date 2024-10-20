@@ -1,12 +1,15 @@
 package org.example;
 
-import org.example.jooq.test.tables.City;
-import org.example.jooq.test.tables.Country;
-import org.example.jooq.test.tables.records.CityRecord;
+import org.example.jooq.tables.City;
+import org.example.jooq.tables.Country;
+import org.example.jooq.tables.records.CityRecord;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
+import org.jooq.codegen.GenerationTool;
 import org.jooq.impl.DSL;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
@@ -16,7 +19,7 @@ public class Main {
 //        GenerationTool.generate(xmlString);
 
         String userName = "root";
-        String password = "password";
+        String password = "root";
         String url = "jdbc:mysql://localhost:3306/test";
         Connection conn = DriverManager.getConnection(url, userName, password);
 

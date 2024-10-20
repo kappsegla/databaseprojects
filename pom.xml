@@ -13,17 +13,19 @@
         <module>jpa</module>
         <module>active-record</module>
         <module>jooq</module>
+        <module>jakartadata</module>
     </modules>
     <properties>
-        <maven.compiler.release>21</maven.compiler.release>
+        <maven.compiler.release>23</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <hibernate.version>7.0.0.Beta1</hibernate.version>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-platform</artifactId>
-                <version>6.4.0.Final</version>
+                <version>${hibernate.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -33,7 +35,7 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.2.0</version>
+            <version>9.1.0</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

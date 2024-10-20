@@ -10,27 +10,21 @@
     </parent>
 
     <artifactId>jooq</artifactId>
-
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 <dependencies>
     <dependency>
         <groupId>org.jooq</groupId>
         <artifactId>jooq</artifactId>
-        <version>3.19.1</version>
+        <version>3.19.13</version>
     </dependency>
     <dependency>
         <groupId>org.jooq</groupId>
         <artifactId>jooq-meta</artifactId>
-        <version>3.19.1</version>
+        <version>3.19.13</version>
     </dependency>
     <dependency>
         <groupId>org.jooq</groupId>
         <artifactId>jooq-codegen</artifactId>
-        <version>3.19.1</version>
+        <version>3.19.13</version>
     </dependency>
 </dependencies>
 </project>
