@@ -1,3 +1,5 @@
+package org.example;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -7,11 +9,7 @@ public class JPAUtil {
 
     static {
         emf = Persistence.createEntityManagerFactory("jpa-hibernate-mysql");
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if (emf.isOpen()) {
-                emf.close();
-            }
-        }));
+        Runtime.getRuntime().addShutdownHook(new Thread(emf::close));
     }
 
     public static EntityManager getEntityManager() {

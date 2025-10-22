@@ -3,8 +3,7 @@ use test;
 drop table if exists country;
 create table country
 (
-    country_id    int          not null
-        primary key,
+    country_id int not null primary key,
     country_name  varchar(255) null,
     language_code varchar(255) null
 );

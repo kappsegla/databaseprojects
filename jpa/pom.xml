@@ -20,5 +20,4 @@
             <artifactId>jakarta.transaction-api</artifactId>
         </dependency>
     </dependencies>
-
 </project>

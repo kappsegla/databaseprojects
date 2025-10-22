@@ -3,41 +3,52 @@ import jakarta.persistence.*;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Main {
 
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+
     public static void main(String[] args) {
-        EntityManager em = JPAUtil.getEntityManager();
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.print("Enter search term: ");
+            String name = scanner.nextLine().trim();
 
-        System.out.print("Enter search term: ");
-        Scanner scanner = new Scanner(System.in);
-        String name = scanner.nextLine();
+            if (name.isEmpty()) {
+                logger.warning("Invalid input: search term is empty.");
+                return;
+            }
 
-        // Validate user input
-        if (name == null || name.isEmpty()) {
-            System.out.println("Invalid input.");
-            return;
+            try (EntityManager em = JPAUtil.getEntityManager()) {
+                List<Country> countries = findCountriesByName(em, name);
+                if (countries.isEmpty()) {
+                    logger.info("No countries found matching: " + name);
+                } else {
+                    countries.forEach(System.out::println);
+                }
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Unexpected error occurred", e);
         }
-
-        TypedQuery<Country> query = em.createQuery("SELECT c FROM Country c WHERE c.countryName = :name", Country.class);
-        query.setParameter("name", name);
-        List<Country> countries = query.getResultList();
-        countries.forEach(System.out::println);
-
-        em.close();
     }
 
-    static void inTransaction(Consumer<EntityManager> work) {
-        try (EntityManager entityManager = JPAUtil.getEntityManager()) {
-            EntityTransaction transaction = entityManager.getTransaction();
+    private static List<Country> findCountriesByName(EntityManager em, String name) {
+        TypedQuery<Country> query = em.createQuery(
+                "SELECT c FROM Country c WHERE c.countryName = :name", Country.class);
+        query.setParameter("name", name);
+        return query.getResultList();
+    }
+
+    public static void inTransaction(Consumer<EntityManager> work) {
+        try (EntityManager em = JPAUtil.getEntityManager()) {
+            EntityTransaction tx = em.getTransaction();
             try {
-                transaction.begin();
-                work.accept(entityManager);
-                transaction.commit();
+                tx.begin();
+                work.accept(em);
+                tx.commit();
             } catch (Exception e) {
-                if (transaction.isActive()) {
-                    transaction.rollback();
-                }
+                if (tx.isActive()) tx.rollback();
                 throw e;
             }
         }

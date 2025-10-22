@@ -5,48 +5,79 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Main {
+
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.load();
         String url = dotenv.get("CONNECTION_STRING");
 
-        if (url == null) {
-            System.out.println("CONNECTION_STRING not found in environment variables.");
+        if (url == null || url.isBlank()) {
+            logger.severe("CONNECTION_STRING not found in environment variables.");
             return;
         }
 
-        Scanner scanner = new Scanner(System.in);
-
-        try (Connection connection = DriverManager.getConnection(url)) {
+        try (Scanner scanner = new Scanner(System.in)) {
             System.out.print("Enter search term: ");
-            String name = scanner.nextLine();
+            String name = scanner.nextLine().trim();
 
-            // Validate user input
-            if (name == null || name.isEmpty()) {
-                System.out.println("Invalid input.");
+            if (name.isEmpty()) {
+                logger.warning("Invalid input: search term is empty.");
                 return;
             }
 
-            String query = "SELECT * FROM country WHERE country_name=?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setString(1, name);
+            List<Country> countries = fetchCountriesByName(url, name);
+            if (countries.isEmpty()) {
+                logger.info("No countries found matching: " + name);
+            } else {
+                countries.forEach(System.out::println);
+            }
 
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    // Process the result set
-                    List<Country> countries = new ArrayList<>();
-                    while (resultSet.next()) {
-                        int id = resultSet.getInt("country_id");
-                        String country_name = resultSet.getString("country_name");
-                        String language_code = resultSet.getString("language_code");
-                        Country country = new Country(id, country_name, language_code);
-                        countries.add(country);
-                    }
-                    countries.forEach(System.out::println);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Unexpected error occurred", e);
+        }
+    }
+
+    private static List<Country> fetchCountriesByName(String url, String name) {
+        String query = "SELECT country_id, country_name, language_code FROM country WHERE country_name = ?";
+        List<Country> results = new ArrayList<>();
+
+        try (
+                Connection connection = DriverManager.getConnection(url);
+                PreparedStatement preparedStatement = connection.prepareStatement(query)
+        ) {
+            preparedStatement.setString(1, name);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("country_id");
+                    String countryName = resultSet.getString("country_name");
+                    String languageCode = resultSet.getString("language_code");
+                    results.add(new Country(id, countryName, languageCode));
                 }
             }
+
         } catch (SQLException e) {
-            System.out.println("An error occurred while connecting to the database.");
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Database query failed", e);
+        }
+
+        return results;
+    }
+
+    public record Country(int countryId, String countryName, String languageCode) {
+        @Override
+        public String toString() {
+            return countryName + " (" + languageCode + ")";
         }
     }
 }

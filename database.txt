@@ -1,0 +1,1 @@
+docker run --name mysqlblog  -e MYSQL_ROOT_PASSWORD=root -e 'MYSQL_ROOT_HOST=%' -e MYSQL_DATABASE=blog -e MYSQL_USER=user -e MYSQL_PASSWORD=password -p 3306:3306 mysql:latest

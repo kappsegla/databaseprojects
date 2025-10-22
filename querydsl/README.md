@@ -1,0 +1,1 @@
+A more modern approach could be Blaze Persistence
