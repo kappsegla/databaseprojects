@@ -9,7 +9,7 @@ public class SQLInjectionExample {
     private static final Logger logger = Logger.getLogger(SQLInjectionExample.class.getName());
 
     public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/test";
+        String url = "jdbc:mysql://localhost:3306/test";//?allowMultiQueries=true";
         String user = "root";
         String password = System.getenv("password");
         String countryName = "Sweden' OR '1'='1";
