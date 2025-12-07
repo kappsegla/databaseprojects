@@ -31,6 +31,11 @@ public class Main {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Unexpected error occurred", e);
         }
+
+        //Run in transaction
+        JPAUtil.getEntityManagerFactory().runInTransaction(em->{
+
+        });
     }
 
     private static List<Country> findCountriesByName(EntityManager em, String name) {
