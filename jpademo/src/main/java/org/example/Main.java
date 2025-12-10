@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceConfiguration;
 import org.hibernate.jpa.HibernatePersistenceConfiguration;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class Main {
@@ -53,7 +54,6 @@ public class Main {
 //                org.addMember(new Member());
 
             });
-        }
 
 //
 //        emf.runInTransaction(em -> {
@@ -92,17 +92,17 @@ public class Main {
 //                IO.readln();
 //            });
 
-//            //Insert/Persist of new entity
-//            //Update of manged entity
-//            emf.runInTransaction(em -> {
-//                Product product = new Product();
-//                product.setName("Pixel 10");
-//                product.setPrice(BigDecimal.valueOf(12000.0));
-//                em.persist(product); //<- Runs insert direct?
-//                System.out.println("Product id: " + product.getId());
-//                product.setName("Pixel 10 Pro"); //<- Waits with update to later. Cached
-//            });
-//
+            //Insert/Persist of new entity
+            //Update of manged entity
+            emf.runInTransaction(em -> {
+                Product product = new Product();
+                product.setName("Pixel 10");
+                product.setPrice(BigDecimal.valueOf(12000.0));
+                em.persist(product); //<- Runs insert direct?
+                System.out.println("Product id: " + product.getId());
+                product.setName("Pixel 10 Pro"); //<- Waits with update to later. Cached
+            });
+
 //            //Find Product and all products from database
 //            emf.runInTransaction(em -> {
 //                Product product = em.find(Product.class, 1);
@@ -118,13 +118,13 @@ public class Main {
 //                System.out.println("====Remove entity====");
 //                //We don't need all the field data to remove an object.
 //                //Just the reference to a managed object is needed.
-////                var product = em.getReference(Product.class, 8);
-////                if (product != null)
-////                    em.remove(product);
+//                var product = em.getReference(Product.class, 8);
+//                if (product != null)
+//                    em.remove(product);
 //            });
 
+        }
     }
-
 
     //Not invented here!!
     private static List<Class<?>> getEntities(String pkg) {
