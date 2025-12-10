@@ -225,6 +225,7 @@ public class Main {
         try {
             connection = DriverManager.getConnection(url);
             connection.setAutoCommit(false);
+            //connection.createStatement().execute("start transaction");
             System.out.println("Transaction started (AutoCommit set to false).");
 
             String insertQuery = "insert into country (country_name, language_code, last_updated) values (?, ?, ?)";
@@ -260,6 +261,7 @@ public class Main {
         } finally {
             if (connection != null) {
                 try {
+                    //connection.commit();
                     connection.setAutoCommit(true);
                     connection.close();
                 } catch (SQLException ex) {
