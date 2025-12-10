@@ -3,28 +3,32 @@ package org.example;
 import jakarta.persistence.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
+@NamedEntityGraph(
+        name = "Organization.member",
+        attributeNodes = @NamedAttributeNode("member")
+)
 public class Organization {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    //@OneToMany(mappedBy = "organization", cascade = CascadeType.PERSIST)
-    //private List<Member> members = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     private Set<Member> member = new HashSet<>();
 
-    public void addMember(Member member){
+    public void addMember(Member member) {
         this.member.add(member);
-        //member.setOrganization(this);
+        member.addOrganization(this);
     }
 
-    public void removeMember(Member member){
+    public void removeMember(Member member) {
         this.member.remove(member);
-        //member.setOrganization(null);
+        member.removeOrganization(this);
     }
 
     @Override
@@ -49,7 +53,9 @@ public class Organization {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "id = " + id + ")";
+        return "Organization{" +
+                "id=" + id +
+                ", member=" + member +
+                '}';
     }
 }

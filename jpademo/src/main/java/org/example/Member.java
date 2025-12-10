@@ -17,23 +17,6 @@ public class Member {
     @ManyToMany(mappedBy = "member")
     private Set<Organization> organization = new HashSet<>();
 
-//    @ManyToOne
-//    @JoinColumn(name = "organization_id")
-//    private Organization organization;
-
-//    public Organization getOrganization() {
-//        return organization;
-//    }
-
-//    public void setOrganization(Organization organization) {
-//        this.organization = organization;
-//    }
-
-
-//    public Set<Organization> getOrganizations() {
-//        return organization;
-//    }
-
     public Long getId() {
         return id;
     }
@@ -58,5 +41,13 @@ public class Member {
     public String toString() {
         return getClass().getSimpleName() + "(" +
                 "id = " + id + ")";
+    }
+
+    public void addOrganization(Organization organization) {
+        this.organization.add(organization);
+    }
+
+    public void removeOrganization(Organization organization) {
+        this.organization.remove(organization);
     }
 }

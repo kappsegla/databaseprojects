@@ -3,11 +3,11 @@ package org.example;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceConfiguration;
 import org.hibernate.jpa.HibernatePersistenceConfiguration;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class Main {
@@ -27,32 +27,36 @@ public class Main {
 
         try (EntityManagerFactory emf = cfg.createEntityManagerFactory()) {
             emf.runInTransaction(em -> {
-                var org = em.find(Organization.class, 1);
-                org.addMember(new Member());
+                //If no Organizations in database, add some
+                if (em.createQuery("select count(o) from Organization o", Long.class)
+                        .getSingleResult() == 0) {
+                    Organization organization1 = new Organization();
+                    var member1 = new Member();
+                    var member2 = new Member();
+                    organization1.addMember(member1);
+                    organization1.addMember(member2);
+                    em.persist(organization1);
+                    em.flush();
+                    Organization organization2 = new Organization();
+                    organization2.addMember(member1);
+                    em.persist(organization2);
+                }
+                System.out.println("==== Using select query, N + 1 ====");
+                em.createQuery("from Organization", Organization.class)
+                        .getResultList().forEach(System.out::println);
 
+                System.out.println("==== Using join fetch ====");
+                //Using join fetch
+                em.createQuery(
+                        "select o from Organization o join fetch o.member",
+                        Organization.class
+                ).getResultList().forEach(System.out::println);
 
-//                Member member = em.find(Member.class, 1);
-//
-//                System.out.println(member.getId());
-//                member.getOrganizations().forEach(System.out::println);
-
-                //Create new organization with a member
-//                  Organization organization = new Organization();
-//                  //var member = em.getReference(Member.class, 1);
-//                  organization.addMember(new Member());
-//                  em.persist(organization);
-
-//                Member member = new Member();
-//
-//                organization.addMember(member);
-//                em.persist(organization);
-//
-//                //Add a new member to an existing organization
-//                var org = em.find(Organization.class, organization.getId());
-//                org.addMember(new Member());
-//                org.addMember(new Member());
-//                org.addMember(new Member());
-
+                System.out.println("==== Entity graph ====");
+                EntityGraph<?> graph = em.getEntityGraph("Organization.member");
+                em.createQuery("from Organization", Organization.class)
+                        .setHint("jakarta.persistence.fetchgraph", graph)
+                        .getResultList().forEach(System.out::println);
             });
 
 //
@@ -94,14 +98,14 @@ public class Main {
 
             //Insert/Persist of new entity
             //Update of manged entity
-            emf.runInTransaction(em -> {
-                Product product = new Product();
-                product.setName("Pixel 10");
-                product.setPrice(BigDecimal.valueOf(12000.0));
-                em.persist(product); //<- Runs insert direct?
-                System.out.println("Product id: " + product.getId());
-                product.setName("Pixel 10 Pro"); //<- Waits with update to later. Cached
-            });
+//            emf.runInTransaction(em -> {
+//                Product product = new Product();
+//                product.setName("Pixel 10");
+//                product.setPrice(BigDecimal.valueOf(12000.0));
+//                em.persist(product); //<- Runs insert direct?
+//                System.out.println("Product id: " + product.getId());
+//                product.setName("Pixel 10 Pro"); //<- Waits with update to later. Cached
+//            });
 
 //            //Find Product and all products from database
 //            emf.runInTransaction(em -> {
