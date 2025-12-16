@@ -1,6 +1,7 @@
 package org.example;
 
 import org.hibernate.StatelessSession;
+import org.hibernate.Transaction;
 
 public class Main {
     public static void main(String[] args) {
@@ -12,5 +13,24 @@ public class Main {
         CountryRepository repository = new CountryRepository_(statelessSession);
         repository.findAll().forEach(System.out::println);
         repository.findByName("Sweden").forEach(System.out::println);
+
+
+        //Insert med repository method. We need to handle the tranaction
+        Transaction tx = statelessSession.beginTransaction();
+        try {
+            Country c = new Country();
+            c.setCountryName("Norway");
+            c.setLanguageCode("NO");
+
+            repository.save(c);   // save() anropar under huven statelessSession.insert()
+
+            tx.commit();
+        } catch (Exception e) {
+            tx.rollback();
+            throw e;
+        } finally {
+            statelessSession.close();
+        }
+
     }
 }
